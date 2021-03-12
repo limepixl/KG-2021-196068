@@ -1,0 +1,10 @@
+.vs
+out
+CMakeFiles
+Debug
+*.dir
+*.cmake
+*.vcxproj
+*.filters
+*.sln
+buildglfw
