@@ -23,7 +23,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
 	// Sozdavanje prozorec i context
-	int w = 800, h = 600;
+	int w = 800, h = 800;
 	GLFWwindow* window = glfwCreateWindow(w, h, "Lab02 - Stefan Ivanovski 196068", nullptr, nullptr);
 	if(window == nullptr)
 	{
