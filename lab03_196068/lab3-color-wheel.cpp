@@ -7,6 +7,11 @@
 #include <fstream>
 #include <sstream>
 
+inline float map(float current, float min, float max, float newMin, float newMax)
+{
+	return (current - min) / (max - min) * (newMax - newMin) + newMin;
+}
+
 void FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
@@ -110,22 +115,38 @@ int main()
 	float increment = PI / 180.0f;
 	float angle = 0.0f;
 	std::vector<float> vertices;
-	vertices.push_back(0.0f);
-	vertices.push_back(0.0f);
-	vertices.push_back(0.0f);
-	// bela vo (0, 0)
-	vertices.push_back(1.0f);
-	vertices.push_back(1.0f);
-	vertices.push_back(1.0f);
 	for (int i = 0; i < 361; i++)
 	{
+		float scale = 2.0f;
+		float r = scale*cos(angle);
+		float g = scale*cos(angle - 2.0f*PI/3.0f);
+		float b = scale*cos(angle + 2.0f*PI/3.0f);
+
+		r = (r + 1.0f) / 2.0f;
+		g = (g + 1.0f) / 2.0f;
+		b = (b + 1.0f) / 2.0f;
+
+		// center
+		vertices.push_back(0.0f);
+		vertices.push_back(0.0f);
+		vertices.push_back(0.0f);
+		vertices.push_back(r);
+		vertices.push_back(g);
+		vertices.push_back(b);
+
 		vertices.push_back(0.6f * cos(angle));
 		vertices.push_back(0.6f * sin(angle));
 		vertices.push_back(0.0f);
-		vertices.push_back((cos(angle) + 1.0f) / 2.0f);
-		vertices.push_back((sin(angle) + 1.0f) / 2.0f);
-		vertices.push_back((sin(angle) + 1.0f) / 2.0f);
+		vertices.push_back(r);
+		vertices.push_back(g);
+		vertices.push_back(b);
 		angle += increment;
+		vertices.push_back(0.6f * cos(angle));
+		vertices.push_back(0.6f * sin(angle));
+		vertices.push_back(0.0f);
+		vertices.push_back(r);
+		vertices.push_back(g);
+		vertices.push_back(b);
 	}
 
 	GLuint VAO;
@@ -155,7 +176,7 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, vertexCount);
+		glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
