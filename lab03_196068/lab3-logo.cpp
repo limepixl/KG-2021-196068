@@ -12,22 +12,10 @@ void FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
 	glViewport(0, 0, width, height);
 }
 
-unsigned int LoadShaders(const char* vertexShaderPath, const char* fragmentShaderPath)
+unsigned int CreateShader(const char* vertexSource, const char* fragmentSource)
 {
-	std::ifstream vertexShader(vertexShaderPath, std::ios::binary);
-	if (!vertexShader.is_open())
-	{
-		printf("Greska pri otvaranje na vertex shader datotekata!\n");
-		exit(-1);
-	}
-
-	std::stringstream vertexStream;
-	vertexStream << vertexShader.rdbuf();
-	std::string vertexSource = vertexStream.str();
-	const char* vertexCstr = vertexSource.c_str();
-
 	GLuint vertex = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertex, 1, &vertexCstr, nullptr);
+	glShaderSource(vertex, 1, &vertexSource, nullptr);
 	glCompileShader(vertex);
 
 	GLint compiled;
@@ -40,20 +28,8 @@ unsigned int LoadShaders(const char* vertexShaderPath, const char* fragmentShade
 		printf("VERTEX SHADER ERROR\n%s\n", message);
 	}
 
-	std::ifstream fragmentShader(fragmentShaderPath, std::ios::binary);
-	if (!fragmentShader.is_open())
-	{
-		printf("Greska pri otvaranje na fragment shader datotekata!\n");
-		exit(-1);
-	}
-
-	std::stringstream fragmentStream;
-	fragmentStream << fragmentShader.rdbuf();
-	std::string fragmentSource = fragmentStream.str();
-	const char* fragmentCstr = fragmentSource.c_str();
-
 	GLuint fragment = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragment, 1, &fragmentCstr, nullptr);
+	glShaderSource(fragment, 1, &fragmentSource, nullptr);
 	glCompileShader(fragment);
 
 	glGetShaderiv(fragment, GL_COMPILE_STATUS, &compiled);
@@ -197,7 +173,24 @@ int main()
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-	unsigned int shaderProgram = LoadShaders("../../../logo_vertex.glsl", "../../../logo_fragment.glsl");
+	const char* vertexSource =
+		"#version 330 core\n"
+		"layout(location = 0) in vec3 vertex_pos;\n"
+		"void main()\n"
+		"{\n"
+		"	gl_Position = vec4(vertex_pos, 1.0);\n"
+		"}\n";
+
+	const char* fragmentSource =
+		"#version 330 core\n"
+		"out vec4 color;\n"
+		"uniform vec3 col;\n"
+		"void main()\n"
+		"{\n"
+		"	color = vec4(col, 1.0);\n"
+		"}\n";
+
+	unsigned int shaderProgram = CreateShader(vertexSource, fragmentSource);
 	glUseProgram(shaderProgram);
 
 	int location = glGetUniformLocation(shaderProgram, "col");

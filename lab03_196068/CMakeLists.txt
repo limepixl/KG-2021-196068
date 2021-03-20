@@ -24,7 +24,7 @@ include_directories(../thirdparty/glad/include/ ../thirdparty/glfw/include/)
 
 file(GLOB VENDORS_SOURCES ../thirdparty/glad/src/glad.c)
 file(GLOB PROJECT_HEADERS include/*.hpp)
-file(GLOB PROJECT_SOURCES lab3-color-wheel.cpp)
+file(GLOB PROJECT_SOURCES lab3-gradient.cpp)
 
 file(GLOB PROJECT_CONFIGS CMakeLists.txt
                           Readme.md
