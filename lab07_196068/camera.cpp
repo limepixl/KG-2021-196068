@@ -17,6 +17,8 @@ struct Camera
 	
 	bool jumped;
 	float velocityY;
+
+	bool crouched;
 };
 Camera cam = {};
 
@@ -25,7 +27,7 @@ static float lastY = 300.0f;
 
 void ProcessInput(GLFWwindow *window, float deltaTime)
 {
-	const float movementSpeed = 2.0f * deltaTime;
+	const float movementSpeed = 5.0f * deltaTime;
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		cam.position += movementSpeed * cam.forward;
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -39,13 +41,31 @@ void ProcessInput(GLFWwindow *window, float deltaTime)
 		cam.jumped = true;
 		cam.velocityY = deltaTime * 20.0f;
 	}
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS && !cam.jumped && !cam.crouched)
+	{
+		cam.crouched = true;
+	}
+	else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE && cam.crouched)
+	{
+		cam.crouched = false;
+	}
 
 	if (!cam.jumped)
 	{
-		if (cam.position.y < 0.0f)
-			cam.position.y = 0.0f;
-		if (cam.position.y > 0.0f)
-			cam.position.y = 0.0f;
+		if (cam.crouched)
+		{
+			if (cam.position.y < -1.0f)
+				cam.position.y = -1.0f;
+			if (cam.position.y > -1.0f)
+				cam.position.y = -1.0f;
+		}
+		else
+		{
+			if (cam.position.y < 0.0f)
+				cam.position.y = 0.0f;
+			if (cam.position.y > 0.0f)
+				cam.position.y = 0.0f;
+		}
 	}
 	else
 	{
@@ -182,7 +202,7 @@ int main()
 	unsigned int shader = CreateShader(vertexSource, fragmentSource);
 	glUseProgram(shader);
 
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(80.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 	glUniformMatrix4fv(glGetUniformLocation(shader, "projection"), 1, GL_FALSE, &projection[0][0]);
 
 	int modelLoc = glGetUniformLocation(shader, "model");
