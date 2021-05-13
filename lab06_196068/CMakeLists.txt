@@ -24,7 +24,7 @@ include_directories(../thirdparty/glad/include/ ../thirdparty/glfw/include/ ../t
 
 file(GLOB VENDORS_SOURCES ../thirdparty/glad/src/glad.c)
 file(GLOB PROJECT_HEADERS include/*.hpp stb_image.h)
-file(GLOB PROJECT_SOURCES sphere.cpp resource.cpp)
+file(GLOB PROJECT_SOURCES pacman.cpp resource.cpp)
 
 file(GLOB PROJECT_CONFIGS CMakeLists.txt
                           Readme.md
