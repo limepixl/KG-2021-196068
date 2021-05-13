@@ -14,6 +14,9 @@ struct Camera
 	glm::vec3 up;
 	float pitch;
 	float yaw;
+	
+	bool jumped;
+	float velocityY;
 };
 Camera cam = {};
 
@@ -31,11 +34,30 @@ void ProcessInput(GLFWwindow *window, float deltaTime)
 		cam.position -= movementSpeed * glm::normalize(glm::cross(cam.forward, cam.up));
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		cam.position += movementSpeed * glm::normalize(glm::cross(cam.forward, cam.up));
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && !cam.jumped)
+	{
+		cam.jumped = true;
+		cam.velocityY = deltaTime * 20.0f;
+	}
 
-	if (cam.position.y < 0.0f)
-		cam.position.y = 0.0f;
-	if (cam.position.y > 0.0f)
-		cam.position.y = 0.0f;
+	if (!cam.jumped)
+	{
+		if (cam.position.y < 0.0f)
+			cam.position.y = 0.0f;
+		if (cam.position.y > 0.0f)
+			cam.position.y = 0.0f;
+	}
+	else
+	{
+		if (cam.position.y - deltaTime * 1.0f <= 0.0f && cam.velocityY < 0.0f)
+		{
+			cam.velocityY = 0.0f;
+			cam.jumped = false;
+		}
+
+		cam.velocityY -= deltaTime * 1.0f;
+		cam.position.y += cam.velocityY;
+	}
 }
 
 void MouseCallback(GLFWwindow* window, double xpos, double ypos)
